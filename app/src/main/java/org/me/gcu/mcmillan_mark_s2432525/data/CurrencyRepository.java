@@ -47,49 +47,74 @@ public class CurrencyRepository {
         i = result.indexOf("</rss>");
         result = result.substring(0, i + 6);
 
-        parseXml(result);
+        return parseXml(result);
     }
 
     private List<CurrencyRate> parseXml(String xmlString) {
-        CurrencyRate currencyRate = null;
-        ArrayList<CurrencyRate> allCurrencyRates = new ArrayList<>();
+        List<CurrencyRate> allCurrencyRates = new ArrayList<>();
+
         try {
-            boolean insideCurrencyRate = false;
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput(new StringReader(result));
+            xpp.setInput(new StringReader(xmlString));
+
             int eventType = xpp.getEventType();
+            boolean insideItem = false;
+            CurrencyRate currentRate = null;
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("item")) {
-                        insideCurrencyRate = true;
-                        currencyRate = new CurrencyRate();
-                        Log.d("parseXml()", "Currency Rate found!");
-                    }
-                    else if (xpp.getName().equalsIgnoreCase("title")) {
+                String tagName = xpp.getName();
 
-                    }
-                    else if (xpp.getName().equalsIgnoreCase("description")) {
+                switch (eventType) {
+                    case XmlPullParser.START_TAG:
+                        if ("item".equalsIgnoreCase(tagName)) {
+                            insideItem = true;
+                            currentRate = new CurrencyRate();
+                        } else if (insideItem && "link".equalsIgnoreCase(tagName)) {
+                            // Extract the Country Code from the URL
+                            String link = xpp.nextText();
+                            int start = link.lastIndexOf("/") + 1;
+                            int end = link.lastIndexOf(".");
 
-                    }
-                    else if (xpp.getName().equalsIgnoreCase("pubDate")) {
-
-                    }
-                }
-                else if (eventType == XmlPullParser.END_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("item")) {
-                        allCurrencyRates.add(currencyRate);
-                        insideCurrencyRate = false;
-                        Log.d("parseXml()", "Parsing of an exchange rate complete!");
-                    }
+                            if (start > 0 && end > start) {
+                                currentRate.setCountryCode(link.substring(start, end).toUpperCase());
+                            }
+                        } else if (insideItem && "description".equalsIgnoreCase(tagName)) {
+                            String desc = xpp.nextText().trim();
+                            // Example: "1 British Pound Sterling = 1.3309 US Dollar"
+                            String[] parts = desc.split("=");
+                            if (parts.length == 2) {
+                                String rhs = parts[1].trim(); // "1.3309 US Dollar
+                                String[] rateAndName = rhs.split(" ", 2);
+                                if (rateAndName.length == 2) {
+                                    try {
+                                        currentRate.setRateToGbp(Double.parseDouble(rateAndName[0]));
+                                    } catch (NumberFormatException e) {
+                                        currentRate.setRateToGbp(0.0);
+                                    }
+                                    currentRate.setCurrencyName(rateAndName[1]);
+                                }
+                            }
+                        } else if (insideItem && "pubDate".equalsIgnoreCase(tagName)) {
+                            currentRate.setLastUpdated(xpp.nextText().trim());
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if ("item".equalsIgnoreCase(tagName) && insideItem && currentRate != null) {
+                            allCurrencyRates.add(currentRate);
+                            insideItem = false;
+                        }
+                        break;
                 }
                 eventType = xpp.next();
             }
-        } catch(XmlPullParserException | IOException e) {
-            Log.e("parseXml()", "PullParser Exception: " + e);
-            throw new RuntimeException();
-        }
+
+        } catch (XmlPullParserException | IOException e) {
+                Log.e("parseXml()", "Exception while parsing: ", e);
+            }
+
+        Log.d("parseXml()", "Parsed " + allCurrencyRates.size() + "currencies");
+        return allCurrencyRates;
     }
 }

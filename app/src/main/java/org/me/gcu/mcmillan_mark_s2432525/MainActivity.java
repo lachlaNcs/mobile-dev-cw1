@@ -5,13 +5,19 @@
 package org.me.gcu.mcmillan_mark_s2432525;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
+import org.me.gcu.mcmillan_mark_s2432525.viewmodel.RatesViewModel;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -22,13 +28,15 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
+public class MainActivity extends AppCompatActivity {
     private TextView rawDataDisplay;
     private Button startButton;
     private String result;
     private String url1="";
     private String urlSource="https://www.fx-exchange.com/gbp/rss.xml";
+    private RatesViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,88 +45,144 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         // Set up the raw links to the graphical components
         rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
         startButton = (Button)findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
+        viewModel = new ViewModelProvider(this).get(RatesViewModel.class);
+        List<CurrencyRate> cached = viewModel.getCachedRates();
+        if (cached != null && !cached.isEmpty()) {
+            Log.d("Persistence", "Loaded cached data from ViewModel");
+            displayRates(cached);
+        } else {
+            Log.d("Persistence", "No cached data, fetching...");
+            viewModel.fetchRates(handler);
+        }
 
-        // More Code goes here
+        startButton.setOnClickListener(v -> {
+            Log.d("ThreadCheck", "Button clicked on thread: " + Thread.currentThread().getName());
+            rawDataDisplay.setText("Fetching data...");
+            viewModel.fetchRates(handler);
+        });
+
     }
 
-    public void onClick(View aview)
-    {
-        startProgress();
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
+                Log.d("Handler", "Received " + rates.size() + " rates");
+
+                if (rates == null || rates.isEmpty()) {
+                    rawDataDisplay.setText("No data received.");
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Fetched ").append(rates.size()).append(" currencies:\n\n");
+                    displayRates(rates);
+                }
+            }
+        }
+    };
+
+    private void displayRates(List<CurrencyRate> rates) {
+        if (rates == null || rates.isEmpty()) {
+            rawDataDisplay.setText("No data received.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Fetched ").append(rates.size()).append(" currencies:\n\n");
+
+        for (int i = 0; i < rates.size(); i++) {
+            CurrencyRate rate = rates.get(i);
+            sb.append(rate.getCountryCode())
+                    .append(" - ")
+                    .append(rate.getCurrencyName())
+                    .append(" = ")
+                    .append(rate.getRateToGbp())
+                    .append(" | ")
+                    .append(rate.getLastUpdated())
+                    .append("\n");
+
+        }
+
+        rawDataDisplay.setText(sb.toString());
     }
 
-    public void startProgress()
-    {
-        // Run network access on a separate thread;
-        new Thread(new Task(urlSource)).start();
-    } //
+//    public void onClick(View aview)
+//    {
+//        startProgress();
+//    }
+
+//    public void startProgress()
+//    {
+//        // Run network access on a separate thread;
+//        new Thread(new Task(urlSource)).start();
+//    } //
 
     // Need separate thread to access the internet resource over network
     // Other neater solutions should be adopted in later iterations.
-    private class Task implements Runnable
-    {
-        private String url;
-        public Task(String aurl){
-            url = aurl;
-        }
-        @Override
-        public void run(){
-            URL aurl;
-            URLConnection yc;
-            BufferedReader in = null;
-            String inputLine = "";
-
-            Log.d("MyTask","in run");
-
-            try
-            {
-                Log.d("MyTask","in try");
-                aurl = new URL(url);
-                yc = aurl.openConnection();
-                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                while ((inputLine = in.readLine()) != null){
-                    result = result + inputLine;
-                }
-                in.close();
-            }
-            catch (IOException ae) {
-                Log.e("MyTask", "ioexception");
-            }
-
-            //Clean up any leading garbage characters
-            int i = result.indexOf("<?"); //initial tag
-            result = result.substring(i);
-
-            //Clean up any trailing garbage at the end of the file
-            i = result.indexOf("</rss>"); //final tag
-            result = result.substring(0, i + 6);
-
-            // Now that you have the xml data into result, you can parse it
-            try {
-                XmlPullParserFactory factory =
-                        XmlPullParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                XmlPullParser xpp = factory.newPullParser();
-                xpp.setInput( new StringReader( result ) );
-
-                // YOUR PARSING HERE!!!
-
-            } catch (XmlPullParserException e) {
-                Log.e("Parsing","EXCEPTION" + e);
-                throw new RuntimeException(e);
-            }
-
-            // Now update the TextView to display raw XML data
-            // Probably not the best way to update TextView
-            // but we are just getting started !
-
-            MainActivity.this.runOnUiThread(new Runnable()
-            {
-                public void run() {
-                    Log.d("UI thread", "I am the UI thread");
-                    rawDataDisplay.setText(result);
-                }
-            });
-        }
-    }
+//    private class Task implements Runnable
+//    {
+//        private String url;
+//        public Task(String aurl){
+//            url = aurl;
+//        }
+//        @Override
+//        public void run(){
+//            URL aurl;
+//            URLConnection yc;
+//            BufferedReader in = null;
+//            String inputLine = "";
+//
+//            Log.d("MyTask","in run");
+//
+//            try
+//            {
+//                Log.d("MyTask","in try");
+//                aurl = new URL(url);
+//                yc = aurl.openConnection();
+//                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+//                while ((inputLine = in.readLine()) != null){
+//                    result = result + inputLine;
+//                }
+//                in.close();
+//            }
+//            catch (IOException ae) {
+//                Log.e("MyTask", "ioexception");
+//            }
+//
+//            //Clean up any leading garbage characters
+//            int i = result.indexOf("<?"); //initial tag
+//            result = result.substring(i);
+//
+//            //Clean up any trailing garbage at the end of the file
+//            i = result.indexOf("</rss>"); //final tag
+//            result = result.substring(0, i + 6);
+//
+//            // Now that you have the xml data into result, you can parse it
+//            try {
+//                XmlPullParserFactory factory =
+//                        XmlPullParserFactory.newInstance();
+//                factory.setNamespaceAware(true);
+//                XmlPullParser xpp = factory.newPullParser();
+//                xpp.setInput( new StringReader( result ) );
+//
+//                // YOUR PARSING HERE!!!
+//
+//            } catch (XmlPullParserException e) {
+//                Log.e("Parsing","EXCEPTION" + e);
+//                throw new RuntimeException(e);
+//            }
+//
+//            // Now update the TextView to display raw XML data
+//            // Probably not the best way to update TextView
+//            // but we are just getting started !
+//
+//            MainActivity.this.runOnUiThread(new Runnable()
+//            {
+//                public void run() {
+//                    Log.d("UI thread", "I am the UI thread");
+//                    rawDataDisplay.setText(result);
+//                }
+//            });
+//        }
+//    }
 }

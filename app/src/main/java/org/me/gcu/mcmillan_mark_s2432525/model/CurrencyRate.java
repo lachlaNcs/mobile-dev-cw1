@@ -2,21 +2,21 @@ package org.me.gcu.mcmillan_mark_s2432525.model;
 
 public class CurrencyRate {
     private String countryCode;
-    private String name;
+    private String currencyName;
     private Double rateToGbp;
     private String lastUpdated;
 
     public CurrencyRate() {};
 
-    public CurrencyRate(String countryCode, String name, Double rateToGbp, String lastUpdated) {
+    public CurrencyRate(String countryCode, String currencyName, Double rateToGbp, String lastUpdated) {
         this.countryCode = countryCode;
-        this.name = name;
+        this.currencyName = currencyName;
         this.rateToGbp = rateToGbp;
         this.lastUpdated = lastUpdated;
     }
 
     public String getCountryCode() { return countryCode; }
-    public String getName() { return name; }
+    public String getCurrencyName() { return currencyName; }
     public Double getRateToGbp() { return rateToGbp; }
     public String getLastUpdated() { return lastUpdated; }
 
@@ -24,8 +24,8 @@ public class CurrencyRate {
         this.countryCode = countryCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
     }
 
     public void setRateToGbp(Double rateToGbp) {
