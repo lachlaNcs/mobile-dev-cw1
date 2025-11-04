@@ -26,6 +26,19 @@ public class AllRatesFragment extends Fragment {
     private TextView rawDataDisplay;
     private Button startButton;
 
+    private final Handler autoUpdateHandler = new Handler(Looper.getMainLooper());
+    private static final long UPDATE_INTERVAL = 60 * 60 * 1000;
+
+    private final Runnable autoUpdateTask = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("AutoUpdate", "Refreshing data on interval, thread: " + Thread.currentThread().getName());
+            rawDataDisplay.setText("Auto-refreshing data...");
+            viewModel.fetchRates(handler);
+            autoUpdateHandler.postDelayed(this, UPDATE_INTERVAL);
+        }
+    };
+
 
     public AllRatesFragment() {}
 
@@ -55,6 +68,19 @@ public class AllRatesFragment extends Fragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        autoUpdateHandler.postDelayed(autoUpdateTask, UPDATE_INTERVAL);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        autoUpdateHandler.removeCallbacks(autoUpdateTask);
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {

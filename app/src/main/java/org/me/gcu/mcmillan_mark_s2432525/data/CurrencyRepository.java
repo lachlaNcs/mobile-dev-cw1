@@ -20,12 +20,12 @@ import java.util.List;
 
 public class CurrencyRepository {
     private static final String SOURCE_URL = "https://www.fx-exchange.com/gbp/rss.xml";
-    private String result;
     public List<CurrencyRate> fetchRates() {
         URL url;
         HttpURLConnection httpURLConnection;
         BufferedReader in = null;
         String inputLine = "";
+        StringBuilder result = new StringBuilder();
 
         Log.d("fetchRates()", "in repository");
 
@@ -34,20 +34,24 @@ public class CurrencyRepository {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
             while ((inputLine = in.readLine()) != null) {
-                result = result + inputLine;
+                result.append(inputLine);
             }
             in.close();
         } catch(IOException e) {
             Log.e("fetchRates()", "IOException");
         }
 
-        int i = result.indexOf("<?");
-        result = result.substring(i);
+        int start = result.indexOf("<?");
+        if (start >= 0) {
+            result.delete(0, start);
+        }
 
-        i = result.indexOf("</rss>");
-        result = result.substring(0, i + 6);
+        int end = result.indexOf("</rss>");
+        if (end >= 0 && end + 6 <= result.length()) {
+            result.delete(end + 6, result.length());
+        }
 
-        return parseXml(result);
+        return parseXml(result.toString());
     }
 
     private List<CurrencyRate> parseXml(String xmlString) {
