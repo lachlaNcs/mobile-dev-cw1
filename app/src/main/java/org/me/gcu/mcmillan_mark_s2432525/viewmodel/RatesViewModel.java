@@ -12,6 +12,7 @@ import org.me.gcu.mcmillan_mark_s2432525.data.CurrencyRepository;
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
 
 import java.util.List;
+import java.util.Locale;
 
 public class RatesViewModel extends ViewModel {
     private final CurrencyRepository repository = new CurrencyRepository();
@@ -27,6 +28,25 @@ public class RatesViewModel extends ViewModel {
             handler.sendMessage(message);
         });
         thread.start();
+    }
+
+    public String formatRates(List<CurrencyRate> rates) {
+        if (rates == null || rates.isEmpty()) {
+            return "No data received.";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Fetched ").append(rates.size()).append(" currencies:\n\n");
+        for (CurrencyRate r : rates) {
+            sb.append(r.getCountryCode())
+                    .append(" - ")
+                    .append(r.getCurrencyName())
+                    .append(" = ")
+                    .append(String.format(Locale.UK, "%.4f", r.getRateToGbp()))
+                    .append(" | ")
+                    .append(r.getLastUpdated())
+                    .append("\n");
+        }
+        return sb.toString();
     }
 
     public List<CurrencyRate> getCachedRates() {
