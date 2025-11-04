@@ -33,9 +33,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private TextView rawDataDisplay;
     private Button startButton;
-    private String result;
-    private String url1="";
-    private String urlSource="https://www.fx-exchange.com/gbp/rss.xml";
     private RatesViewModel viewModel;
 
     @Override
@@ -105,84 +102,4 @@ public class MainActivity extends AppCompatActivity {
 
         rawDataDisplay.setText(sb.toString());
     }
-
-//    public void onClick(View aview)
-//    {
-//        startProgress();
-//    }
-
-//    public void startProgress()
-//    {
-//        // Run network access on a separate thread;
-//        new Thread(new Task(urlSource)).start();
-//    } //
-
-    // Need separate thread to access the internet resource over network
-    // Other neater solutions should be adopted in later iterations.
-//    private class Task implements Runnable
-//    {
-//        private String url;
-//        public Task(String aurl){
-//            url = aurl;
-//        }
-//        @Override
-//        public void run(){
-//            URL aurl;
-//            URLConnection yc;
-//            BufferedReader in = null;
-//            String inputLine = "";
-//
-//            Log.d("MyTask","in run");
-//
-//            try
-//            {
-//                Log.d("MyTask","in try");
-//                aurl = new URL(url);
-//                yc = aurl.openConnection();
-//                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-//                while ((inputLine = in.readLine()) != null){
-//                    result = result + inputLine;
-//                }
-//                in.close();
-//            }
-//            catch (IOException ae) {
-//                Log.e("MyTask", "ioexception");
-//            }
-//
-//            //Clean up any leading garbage characters
-//            int i = result.indexOf("<?"); //initial tag
-//            result = result.substring(i);
-//
-//            //Clean up any trailing garbage at the end of the file
-//            i = result.indexOf("</rss>"); //final tag
-//            result = result.substring(0, i + 6);
-//
-//            // Now that you have the xml data into result, you can parse it
-//            try {
-//                XmlPullParserFactory factory =
-//                        XmlPullParserFactory.newInstance();
-//                factory.setNamespaceAware(true);
-//                XmlPullParser xpp = factory.newPullParser();
-//                xpp.setInput( new StringReader( result ) );
-//
-//                // YOUR PARSING HERE!!!
-//
-//            } catch (XmlPullParserException e) {
-//                Log.e("Parsing","EXCEPTION" + e);
-//                throw new RuntimeException(e);
-//            }
-//
-//            // Now update the TextView to display raw XML data
-//            // Probably not the best way to update TextView
-//            // but we are just getting started !
-//
-//            MainActivity.this.runOnUiThread(new Runnable()
-//            {
-//                public void run() {
-//                    Log.d("UI thread", "I am the UI thread");
-//                    rawDataDisplay.setText(result);
-//                }
-//            });
-//        }
-//    }
 }
