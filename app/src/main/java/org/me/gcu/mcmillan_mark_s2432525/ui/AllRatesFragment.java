@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -23,8 +24,10 @@ import java.util.List;
 
 public class AllRatesFragment extends Fragment {
     private RatesViewModel viewModel;
-    private TextView rawDataDisplay;
+    private TextView statusText;
     private Button startButton;
+    private RecyclerView ratesRecyclerView;
+    private CurrencyRateAdapter adapter;
 
     private final Handler autoUpdateHandler = new Handler(Looper.getMainLooper());
     private static final long UPDATE_INTERVAL = 60 * 60 * 1000;
@@ -33,7 +36,7 @@ public class AllRatesFragment extends Fragment {
         @Override
         public void run() {
             Log.d("AutoUpdate", "Refreshing data on interval, thread: " + Thread.currentThread().getName());
-            rawDataDisplay.setText("Auto-refreshing data...");
+            statusText.setText("Auto-refreshing data...");
             viewModel.fetchRates(handler);
             autoUpdateHandler.postDelayed(this, UPDATE_INTERVAL);
         }
@@ -46,24 +49,29 @@ public class AllRatesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_allrates, container, false);
-        rawDataDisplay = root.findViewById(R.id.rawDataDisplay);
+        statusText = root.findViewById(R.id.statusText);
         startButton = root.findViewById(R.id.startButton);
+        ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
+
+        adapter = new CurrencyRateAdapter();
+        ratesRecyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RatesViewModel.class);
 
         List<CurrencyRate> cached = viewModel.getCachedRates();
         if (cached != null && !cached.isEmpty()) {
             Log.d("Persistence: AllRatesFragment", "Loaded cached data from viewmodel");
-            rawDataDisplay.setText(viewModel.formatRates(cached));
+            statusText.setText("Fetched " + cached.size() + " currencies:" );
+            adapter.setItems(cached);
         } else {
             Log.d("Persistence: AllRatesFragment", "No cached data, fetching...");
-            rawDataDisplay.setText("Fetching data...");
+            statusText.setText("Fetching data...");
             viewModel.fetchRates(handler);
         }
 
         startButton.setOnClickListener(v -> {
             Log.d("ThreadCheck from AllRatesFragment", "Button clicked on Thread: " + Thread.currentThread().getName());
-            rawDataDisplay.setText("Refreshing data...");
+            statusText.setText("Refreshing data...");
             viewModel.fetchRates(handler);
         });
 
@@ -73,7 +81,6 @@ public class AllRatesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         autoUpdateHandler.postDelayed(autoUpdateTask, UPDATE_INTERVAL);
     }
 
@@ -88,8 +95,13 @@ public class AllRatesFragment extends Fragment {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
-                Log.d("Handler in AllRatesFragment", "Received: " + rates.size() + " rates");
-                rawDataDisplay.setText(viewModel.formatRates(rates));
+                if (rates == null || rates.isEmpty()) {
+                    statusText.setText("No data received, please try again later.");
+                    adapter.setItems(null);
+                } else {
+                    statusText.setText("Fetched " + rates.size() + " currencies:");
+                    adapter.setItems(rates);
+                }
             }
         }
     };
