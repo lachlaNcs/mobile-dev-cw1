@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.McMillan_Mark_S2432525" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/MediumPurple</item>
+        <item name="colorPrimaryDark">@color/MidnightBlue</item>
+        <item name="colorAccent">@color/Gold</item>
+        <item name="colorOnPrimary">@android:color/white</item>
     </style>
-
-    <style name="Theme.McMillan_Mark_S2432525" parent="Base.Theme.McMillan_Mark_S2432525" />
 </resources>
