@@ -101,6 +101,7 @@ public class AllRatesFragment extends Fragment {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
+                // TODO: Try to get cached rates if rates is null
                 if (rates == null || rates.isEmpty()) {
                     statusText.setText("No data received, please try again later.");
                     lastUpdatedText.setText("Last updated: N/A");
