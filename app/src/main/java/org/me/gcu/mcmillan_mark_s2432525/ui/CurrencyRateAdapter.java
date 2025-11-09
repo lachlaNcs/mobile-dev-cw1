@@ -31,14 +31,14 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
         CurrencyRate rate = items.get(position);
 
         holder.codeAndName.setText(
-                rate.getCountryCode() + " - " + rate.getCurrencyName()
+                String.format(Locale.UK, "%s (%s)",
+                        rate.getCountryCode(),
+                        rate.getCurrencyName())
         );
 
         holder.rate.setText(
-                String.format(Locale.UK, "%.4f", rate.getRateToGbp())
+                String.format(Locale.UK, "1 GBP = %.4f", rate.getRateToGbp())
         );
-
-        holder.lastUpdated.setText(rate.getLastUpdated());
     }
 
     @Override
@@ -57,13 +57,11 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
     static class RateViewHolder extends RecyclerView.ViewHolder {
         final TextView codeAndName;
         final TextView rate;
-        final TextView lastUpdated;
 
         RateViewHolder(@NonNull View itemView) {
             super(itemView);
             codeAndName = itemView.findViewById(R.id.textCodeAndName);
             rate = itemView.findViewById(R.id.textRate);
-            lastUpdated = itemView.findViewById(R.id.textLastUpdated);
         }
     }
 }

@@ -20,11 +20,16 @@ import org.me.gcu.mcmillan_mark_s2432525.R;
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
 import org.me.gcu.mcmillan_mark_s2432525.viewmodel.RatesViewModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AllRatesFragment extends Fragment {
     private RatesViewModel viewModel;
     private TextView statusText;
+    private TextView lastUpdatedText;
     private Button startButton;
     private RecyclerView ratesRecyclerView;
     private CurrencyRateAdapter adapter;
@@ -50,6 +55,7 @@ public class AllRatesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_allrates, container, false);
         statusText = root.findViewById(R.id.statusText);
+        lastUpdatedText = root.findViewById(R.id.lastUpdatedText);
         startButton = root.findViewById(R.id.startButton);
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
 
@@ -97,9 +103,20 @@ public class AllRatesFragment extends Fragment {
                 List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
                 if (rates == null || rates.isEmpty()) {
                     statusText.setText("No data received, please try again later.");
+                    lastUpdatedText.setText("Last updated: N/A");
                     adapter.setItems(null);
                 } else {
                     statusText.setText("Fetched " + rates.size() + " currencies:");
+                    String latest = rates.get(0).getLastUpdated();
+                    SimpleDateFormat in = new SimpleDateFormat("EEE MMM d yyyy H:mm:ss 'UTC'", Locale.ENGLISH);
+                    SimpleDateFormat out = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.UK);
+                    Date date = null;
+                    try {
+                        date = in.parse(latest);
+                    } catch (ParseException e) {
+                        lastUpdatedText.setText("Last updated: " + latest);
+                    }
+                    lastUpdatedText.setText("Last updated: " + out.format(date));
                     adapter.setItems(rates);
                 }
             }
