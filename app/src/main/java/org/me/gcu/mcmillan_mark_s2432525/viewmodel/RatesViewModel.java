@@ -20,6 +20,7 @@ public class RatesViewModel extends ViewModel {
 
     public void fetchRates(Handler handler) {
         Thread thread = new Thread(() -> {
+            // TODO: Handle the case where the User has no internet
             Log.d("RatesViewModel", "Running fetchRates() on thread: " +Thread.currentThread().getName());
             List<CurrencyRate> rates = repository.fetchRates();
             cachedRates = rates;
