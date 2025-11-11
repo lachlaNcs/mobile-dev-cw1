@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.me.gcu.mcmillan_mark_s2432525.R;
@@ -32,6 +35,7 @@ public class AllRatesFragment extends Fragment {
     private TextView lastUpdatedText;
     private Button startButton;
     private RecyclerView ratesRecyclerView;
+    private EditText searchInput;
     private CurrencyRateAdapter adapter;
 
     private final Handler autoUpdateHandler = new Handler(Looper.getMainLooper());
@@ -58,11 +62,14 @@ public class AllRatesFragment extends Fragment {
         lastUpdatedText = root.findViewById(R.id.lastUpdatedText);
         startButton = root.findViewById(R.id.startButton);
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
+        searchInput = root.findViewById(R.id.searchInput);
 
         adapter = new CurrencyRateAdapter();
         ratesRecyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RatesViewModel.class);
+
+        viewModel.getFilteredRates().observe(getViewLifecycleOwner(), adapter::setItems);
 
         List<CurrencyRate> cached = viewModel.getCachedRates();
         if (cached != null && !cached.isEmpty()) {
@@ -91,6 +98,19 @@ public class AllRatesFragment extends Fragment {
             Log.d("ThreadCheck from AllRatesFragment", "Button clicked on Thread: " + Thread.currentThread().getName());
             statusText.setText("Refreshing data...");
             viewModel.fetchRates(handler);
+        });
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                viewModel.filterRates(s.toString());
+            }
         });
 
         return root;

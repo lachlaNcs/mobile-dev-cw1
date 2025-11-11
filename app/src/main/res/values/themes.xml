@@ -1,11 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/MediumPurple</item>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/DodgerBlue</item>
         <item name="colorPrimaryDark">@color/MidnightBlue</item>
-        <item name="colorAccent">@color/Gold</item>
         <item name="colorOnPrimary">@android:color/white</item>
+
+        <!-- Surface and background tones -->
+        <item name="colorSurface">@color/WhiteSmoke</item>
+        <item name="colorOnSurface">@color/Black</item>
+
+        <!-- Customize shape and ripple behavior -->
+        <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">?attr/colorPrimary</item>
     </style>
 </resources>
