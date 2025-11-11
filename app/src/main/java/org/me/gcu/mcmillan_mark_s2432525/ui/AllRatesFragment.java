@@ -68,6 +68,18 @@ public class AllRatesFragment extends Fragment {
         if (cached != null && !cached.isEmpty()) {
             Log.d("Persistence: AllRatesFragment", "Loaded cached data from viewmodel");
             statusText.setText("Fetched " + cached.size() + " currencies:" );
+
+            String latest = cached.get(0).getLastUpdated();
+
+            try {
+                SimpleDateFormat in = new SimpleDateFormat("EEE MMM d yyyy H:mm:ss 'UTC'", Locale.ENGLISH);
+                SimpleDateFormat out = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.UK);
+                Date date = in.parse(latest);
+                lastUpdatedText.setText("Last updated: " + out.format(date));
+            } catch (ParseException e) {
+                lastUpdatedText.setText("Last updated: " + latest);
+            }
+
             adapter.setItems(cached);
         } else {
             Log.d("Persistence: AllRatesFragment", "No cached data, fetching...");
@@ -101,7 +113,6 @@ public class AllRatesFragment extends Fragment {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
-                // TODO: Try to get cached rates if rates is null
                 if (rates == null || rates.isEmpty()) {
                     statusText.setText("No data received, please try again later.");
                     lastUpdatedText.setText("Last updated: N/A");
@@ -109,15 +120,14 @@ public class AllRatesFragment extends Fragment {
                 } else {
                     statusText.setText("Fetched " + rates.size() + " currencies:");
                     String latest = rates.get(0).getLastUpdated();
-                    SimpleDateFormat in = new SimpleDateFormat("EEE MMM d yyyy H:mm:ss 'UTC'", Locale.ENGLISH);
-                    SimpleDateFormat out = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.UK);
-                    Date date = null;
                     try {
-                        date = in.parse(latest);
+                        SimpleDateFormat in = new SimpleDateFormat("EEE MMM d yyyy H:mm:ss 'UTC'", Locale.ENGLISH);
+                        SimpleDateFormat out = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.UK);
+                        Date date = in.parse(latest);
+                        lastUpdatedText.setText("Last updated: " + out.format(date));
                     } catch (ParseException e) {
                         lastUpdatedText.setText("Last updated: " + latest);
                     }
-                    lastUpdatedText.setText("Last updated: " + out.format(date));
                     adapter.setItems(rates);
                 }
             }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="rate_very_strong">#26C6DA</color> <!-- < 1.0 -->
+    <color name="rate_strong">#8BC34A</color>         <!-- 1.0 – 5.0 -->
+    <color name="rate_moderate">#FFC107</color>       <!-- 5.0 – 10.0 -->
+    <color name="rate_weak">#F44336</color> <!-- > 10.0 -->
     <color name="White">#FFFFFF</color>
     <color name="Ivory">#FFFFF0</color>
     <color name="LightYellow">#FFFFE0</color>

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.me.gcu.mcmillan_mark_s2432525.R;
@@ -39,6 +40,21 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
         holder.rate.setText(
                 String.format(Locale.UK, "1 GBP = %.4f", rate.getRateToGbp())
         );
+
+        double val = rate.getRateToGbp();
+        int colorRes;
+
+        if (val < 1.0) {
+            colorRes = R.color.rate_very_strong;
+        } else if (val < 5.0 ) {
+            colorRes = R.color.rate_strong;
+        } else if (val < 10.0) {
+            colorRes = R.color.rate_moderate;
+        } else {
+            colorRes = R.color.rate_weak;
+        }
+
+        holder.rate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorRes));
     }
 
     @Override
