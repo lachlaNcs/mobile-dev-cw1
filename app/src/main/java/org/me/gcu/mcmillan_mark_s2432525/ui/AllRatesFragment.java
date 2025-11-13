@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -33,9 +34,9 @@ public class AllRatesFragment extends Fragment {
     private RatesViewModel viewModel;
     private TextView statusText;
     private TextView lastUpdatedText;
-    private Button startButton;
     private RecyclerView ratesRecyclerView;
     private EditText searchInput;
+    private SwipeRefreshLayout swipeRefresh;
     private CurrencyRateAdapter adapter;
 
     private final Handler autoUpdateHandler = new Handler(Looper.getMainLooper());
@@ -60,9 +61,11 @@ public class AllRatesFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_allrates, container, false);
         statusText = root.findViewById(R.id.statusText);
         lastUpdatedText = root.findViewById(R.id.lastUpdatedText);
-        startButton = root.findViewById(R.id.startButton);
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
         searchInput = root.findViewById(R.id.searchInput);
+        swipeRefresh = root.findViewById(R.id.swipeRefresh);
+
+
 
         adapter = new CurrencyRateAdapter();
         ratesRecyclerView.setAdapter(adapter);
@@ -94,9 +97,10 @@ public class AllRatesFragment extends Fragment {
             viewModel.fetchRates(handler);
         }
 
-        startButton.setOnClickListener(v -> {
-            Log.d("ThreadCheck from AllRatesFragment", "Button clicked on Thread: " + Thread.currentThread().getName());
+        swipeRefresh.setOnRefreshListener(() -> {
+            Log.i("onRefresh()", "onRefresh event detected");
             statusText.setText("Refreshing data...");
+            searchInput.setText("");
             viewModel.fetchRates(handler);
         });
 
@@ -131,6 +135,7 @@ public class AllRatesFragment extends Fragment {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
+            swipeRefresh.setRefreshing(false);
             if (msg.what == 1) {
                 List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
                 if (rates == null || rates.isEmpty()) {
