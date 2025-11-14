@@ -51,6 +51,25 @@
         android:textSize="13sp"
         android:textColor="?android:textColorSecondary" />
 
+    <TextView
+        android:id="@+id/pullToRefreshLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pull-down to refresh"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp" />
+
+    <ImageView
+        android:id="@+id/pullToRefreshArrow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/outline_arrow_cool_down_24"
+        android:layout_gravity="center_horizontal"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"

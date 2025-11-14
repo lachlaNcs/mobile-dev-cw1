@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -64,8 +63,6 @@ public class AllRatesFragment extends Fragment {
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
         searchInput = root.findViewById(R.id.searchInput);
         swipeRefresh = root.findViewById(R.id.swipeRefresh);
-
-
 
         adapter = new CurrencyRateAdapter();
         ratesRecyclerView.setAdapter(adapter);
