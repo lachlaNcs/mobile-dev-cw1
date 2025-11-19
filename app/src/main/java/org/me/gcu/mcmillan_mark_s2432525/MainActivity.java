@@ -31,6 +31,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
 import org.me.gcu.mcmillan_mark_s2432525.ui.AllRatesFragment;
+import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyConverterFragment;
+import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyRateAdapter;
+import org.me.gcu.mcmillan_mark_s2432525.viewmodel.ConversionViewModel;
 import org.me.gcu.mcmillan_mark_s2432525.viewmodel.RatesViewModel;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -44,15 +47,19 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CurrencyRateAdapter.OnCurrencyClickListener {
     private static final String PREF_FILE_NAME = "user_settings";
     private static final String PREF_THEME_MODE = "theme_mode";
     private MenuItem themeToggleItem;
+    private ConversionViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         applySavedTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        viewModel = new ViewModelProvider(this).get(ConversionViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, new AllRatesFragment())
                     .commit();
         }
+    }
+
+    @Override
+    public void onCurrencyClicked(CurrencyRate rate) {
+        viewModel.setSelectedRate(rate);
+
+        CurrencyConverterFragment f = new CurrencyConverterFragment();
+        f.show(getSupportFragmentManager(), "converter");
     }
 
     private void applySavedTheme() {

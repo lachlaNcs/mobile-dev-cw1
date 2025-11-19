@@ -17,7 +17,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapter.RateViewHolder> {
+
+    public interface OnCurrencyClickListener {
+        void onCurrencyClicked(CurrencyRate rate);
+    }
+
     private final List<CurrencyRate> items = new ArrayList<>();
+    private final OnCurrencyClickListener listener;
+
+    public CurrencyRateAdapter(OnCurrencyClickListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -55,6 +65,8 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
         }
 
         holder.rate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorRes));
+
+        holder.itemView.setOnClickListener(v -> listener.onCurrencyClicked(rate));
     }
 
     @Override

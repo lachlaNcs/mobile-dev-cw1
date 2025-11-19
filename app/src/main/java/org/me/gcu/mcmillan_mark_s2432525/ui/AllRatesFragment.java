@@ -64,7 +64,13 @@ public class AllRatesFragment extends Fragment {
         searchInput = root.findViewById(R.id.searchInput);
         swipeRefresh = root.findViewById(R.id.swipeRefresh);
 
-        adapter = new CurrencyRateAdapter();
+        adapter = new CurrencyRateAdapter((CurrencyRate rate) -> {
+            if (getActivity() instanceof CurrencyRateAdapter.OnCurrencyClickListener) {
+                ((CurrencyRateAdapter.OnCurrencyClickListener) getActivity())
+                        .onCurrencyClicked(rate);
+            }
+        });
+
         ratesRecyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RatesViewModel.class);
@@ -84,6 +90,7 @@ public class AllRatesFragment extends Fragment {
                 Date date = in.parse(latest);
                 lastUpdatedText.setText("Last updated: " + out.format(date));
             } catch (ParseException e) {
+                Log.e("AllRatesFragment", "ParseException whilst parsing date: " + e);
                 lastUpdatedText.setText("Last updated: " + latest);
             }
 
@@ -148,6 +155,7 @@ public class AllRatesFragment extends Fragment {
                         Date date = in.parse(latest);
                         lastUpdatedText.setText("Last updated: " + out.format(date));
                     } catch (ParseException e) {
+                        Log.e("AllRatesFragment", "ParseException: " + e);
                         lastUpdatedText.setText("Last updated: " + latest);
                     }
                     adapter.setItems(rates);
