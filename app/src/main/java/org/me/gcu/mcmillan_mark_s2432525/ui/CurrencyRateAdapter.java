@@ -3,6 +3,7 @@ package org.me.gcu.mcmillan_mark_s2432525.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.me.gcu.mcmillan_mark_s2432525.R;
+import org.me.gcu.mcmillan_mark_s2432525.data.FlagManager;
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
 
 import java.util.ArrayList;
@@ -66,6 +68,14 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
 
         holder.rate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorRes));
 
+        int flagRes = FlagManager.getFlagResId(holder.itemView.getContext(), rate.getCountryCode());
+
+        if (flagRes != 0) {
+            holder.flag.setImageResource(flagRes);
+        } else {
+            holder.flag.setImageResource(R.drawable.eu);
+        }
+
         holder.itemView.setOnClickListener(v -> listener.onCurrencyClicked(rate));
     }
 
@@ -85,11 +95,13 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
     static class RateViewHolder extends RecyclerView.ViewHolder {
         final TextView codeAndName;
         final TextView rate;
+        final ImageView flag;
 
         RateViewHolder(@NonNull View itemView) {
             super(itemView);
             codeAndName = itemView.findViewById(R.id.textCodeAndName);
             rate = itemView.findViewById(R.id.textRate);
+            flag = itemView.findViewById(R.id.imageFlag);
         }
     }
 }
