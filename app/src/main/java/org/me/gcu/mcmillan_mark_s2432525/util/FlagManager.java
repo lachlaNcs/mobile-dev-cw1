@@ -1,4 +1,4 @@
-package org.me.gcu.mcmillan_mark_s2432525.data;
+package org.me.gcu.mcmillan_mark_s2432525.util;
 
 import android.content.Context;
 import android.util.Log;

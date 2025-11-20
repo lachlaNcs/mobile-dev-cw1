@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.me.gcu.mcmillan_mark_s2432525.R;
-import org.me.gcu.mcmillan_mark_s2432525.data.FlagManager;
+import org.me.gcu.mcmillan_mark_s2432525.util.FlagManager;
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
 
 import java.util.ArrayList;
