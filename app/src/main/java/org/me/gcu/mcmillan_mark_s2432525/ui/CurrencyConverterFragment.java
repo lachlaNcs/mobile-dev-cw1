@@ -1,5 +1,7 @@
 package org.me.gcu.mcmillan_mark_s2432525.ui;
 
+import android.app.Dialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import org.me.gcu.mcmillan_mark_s2432525.R;
@@ -83,6 +87,42 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
 
         return view;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        boolean isLandscape =
+                getResources().getConfiguration().orientation
+                        == Configuration.ORIENTATION_LANDSCAPE;
+
+        if (!isLandscape) return; // Portrait works normally.
+
+        Dialog dialog = getDialog();
+        if (dialog == null) return;
+
+        FrameLayout bottomSheet =
+                dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+
+        if (bottomSheet == null) return;
+
+        BottomSheetBehavior<FrameLayout> behavior =
+                BottomSheetBehavior.from(bottomSheet);
+
+        // Force the bottom sheet to full height
+        bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        bottomSheet.requestLayout();
+
+        // Fully expand it
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        // Skip collapsed state entirely
+        behavior.setSkipCollapsed(true);
+
+        // Prevent half-expanded behavior
+        behavior.setFitToContents(true);
+    }
+
 
     private void updateLabels() {
         if (currentRate == null) return;
