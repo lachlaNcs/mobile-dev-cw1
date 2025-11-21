@@ -15,7 +15,7 @@ public class ConversionViewModel extends ViewModel {
     }
 
     public void setSelectedRate(CurrencyRate rate) {
-        selectedRate.setValue(rate);
+        selectedRate.postValue(rate);
     }
 
     public LiveData<Boolean> isGbpToOther() {

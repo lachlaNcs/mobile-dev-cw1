@@ -8,17 +8,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.view.View.OnClickListener;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,18 +25,6 @@ import org.me.gcu.mcmillan_mark_s2432525.ui.AllRatesFragment;
 import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyConverterFragment;
 import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyRateAdapter;
 import org.me.gcu.mcmillan_mark_s2432525.viewmodel.ConversionViewModel;
-import org.me.gcu.mcmillan_mark_s2432525.viewmodel.RatesViewModel;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CurrencyRateAdapter.OnCurrencyClickListener {
     private static final String PREF_FILE_NAME = "user_settings";
@@ -119,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyRateAdapt
         prefs.edit().putInt(PREF_THEME_MODE, newMode).apply();
 
         AppCompatDelegate.setDefaultNightMode(newMode);
+
+        updateThemeIcon();
     }
 
     private boolean isDarkMode() {

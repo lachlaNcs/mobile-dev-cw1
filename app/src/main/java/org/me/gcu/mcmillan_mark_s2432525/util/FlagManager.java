@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlagManager {
+    private static final String TAG = "FlagManager";
     private static final Map<String, String> currencyToFlag = new HashMap<>();
 
     // Map all currency codes to their flag
@@ -196,7 +197,7 @@ public class FlagManager {
         String alpha2 = currencyToFlag.get(currencyCode.toUpperCase());
 
         if (alpha2 == null) {
-            Log.w("FlagManager", "No flag mapping for currency " + currencyCode);
+            Log.w(TAG, "No flag mapping for currency " + currencyCode);
             return 0;
         }
 
@@ -207,7 +208,7 @@ public class FlagManager {
         );
 
         if (id == 0) {
-            Log.w("FlagManager", "Drawable not found for code " + alpha2);
+            Log.w(TAG, "Drawable not found for currency " + currencyCode + " (alpha2=" + alpha2 + ")");
         }
 
         return id;

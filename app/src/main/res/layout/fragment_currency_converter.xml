@@ -6,19 +6,17 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/txtPairTitle"
+        android:id="@+id/countryCodePairText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="GBP / EUR" />
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/txtRateInfo"
+        android:id="@+id/exchangeRateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="1 GBP = 1.2345 EUR" />
+        android:layout_marginTop="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,16 +25,15 @@
         android:layout_marginTop="16dp">
 
         <TextView
-            android:id="@+id/txtFromCode"
+            android:id="@+id/fromCountryCodeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GBP"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"/>
 
         <EditText
-            android:id="@+id/editFromAmount"
+            android:id="@+id/fromCountryCodeAmountInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,16 +48,15 @@
         android:layout_marginTop="16dp">
 
         <TextView
-            android:id="@+id/txtToCode"
+            android:id="@+id/toCountryCodeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EUR"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"/>
 
         <TextView
-            android:id="@+id/txtToAmount"
+            android:id="@+id/conversionResultText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -68,16 +64,9 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnSwapDirection"
+        android:id="@+id/swapExchangeDirectionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Swap GBP ⇄ EUR" />
-
-    <Button
-        android:id="@+id/btnConvert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Convert" />
+        />
 </LinearLayout>

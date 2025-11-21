@@ -3,12 +3,12 @@ package org.me.gcu.mcmillan_mark_s2432525.model;
 public class CurrencyRate {
     private String countryCode;
     private String currencyName;
-    private Double rateToGbp;
+    private double rateToGbp;
     private String lastUpdated;
 
     public CurrencyRate() {};
 
-    public CurrencyRate(String countryCode, String currencyName, Double rateToGbp, String lastUpdated) {
+    public CurrencyRate(String countryCode, String currencyName, double rateToGbp, String lastUpdated) {
         this.countryCode = countryCode;
         this.currencyName = currencyName;
         this.rateToGbp = rateToGbp;
@@ -17,7 +17,7 @@ public class CurrencyRate {
 
     public String getCountryCode() { return countryCode; }
     public String getCurrencyName() { return currencyName; }
-    public Double getRateToGbp() { return rateToGbp; }
+    public double getRateToGbp() { return rateToGbp; }
     public String getLastUpdated() { return lastUpdated; }
 
     public void setCountryCode(String countryCode) {
@@ -34,5 +34,15 @@ public class CurrencyRate {
 
     public void setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyRate{" +
+                "countryCode='" + countryCode + '\'' +
+                ", currencyName='" + currencyName + '\'' +
+                ", rateToGbp=" + rateToGbp +
+                ", lastUpdated='" + lastUpdated + '\'' +
+                '}';
     }
 }

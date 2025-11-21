@@ -1,6 +1,8 @@
 package org.me.gcu.mcmillan_mark_s2432525.ui;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,17 +24,17 @@ import org.me.gcu.mcmillan_mark_s2432525.viewmodel.ConversionViewModel;
 import java.util.Locale;
 
 public class CurrencyConverterFragment extends BottomSheetDialogFragment {
+    private static final String TAG = "CurrencyConverterFragment";
 
     private ConversionViewModel viewModel;
 
-    private TextView txtPairTitle;
-    private TextView txtRateInfo;
-    private TextView txtFromCode;
-    private TextView txtToCode;
-    private TextView txtToAmount;
-    private EditText editFromAmount;
-    private Button btnSwapDirection;
-    private Button btnConvert;
+    private TextView countryCodePairText;
+    private TextView exchangeRateText;
+    private TextView fromCountryCodeText;
+    private TextView toCountryCodeText;
+    private TextView conversionResultText;
+    private EditText fromCountryCodeAmountInput;
+    private Button swapExchangeDirectionButton;
 
     private CurrencyRate currentRate;
     private boolean isGbpToOther;
@@ -45,20 +47,20 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
 
         View view = inflater.inflate(R.layout.fragment_currency_converter, container, false);
 
-        txtPairTitle = view.findViewById(R.id.txtPairTitle);
-        txtRateInfo = view.findViewById(R.id.txtRateInfo);
-        txtFromCode = view.findViewById(R.id.txtFromCode);
-        txtToCode = view.findViewById(R.id.txtToCode);
-        txtToAmount = view.findViewById(R.id.txtToAmount);
-        editFromAmount = view.findViewById(R.id.editFromAmount);
-        btnSwapDirection = view.findViewById(R.id.btnSwapDirection);
-        btnConvert = view.findViewById(R.id.btnConvert);
+        countryCodePairText = view.findViewById(R.id.countryCodePairText);
+        exchangeRateText = view.findViewById(R.id.exchangeRateText);
+        fromCountryCodeText = view.findViewById(R.id.fromCountryCodeText);
+        toCountryCodeText = view.findViewById(R.id.toCountryCodeText);
+        conversionResultText = view.findViewById(R.id.conversionResultText);
+        fromCountryCodeAmountInput = view.findViewById(R.id.fromCountryCodeAmountInput);
+        swapExchangeDirectionButton = view.findViewById(R.id.swapExchangeDirectionButton);
 
         viewModel = new ViewModelProvider(requireActivity()).get(ConversionViewModel.class);
 
         viewModel.getSelectedRate().observe(getViewLifecycleOwner(), rate -> {
             currentRate = rate;
             updateLabels();
+            performConversion();
         });
 
         viewModel.isGbpToOther().observe(getViewLifecycleOwner(), dir -> {
@@ -67,8 +69,17 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
             performConversion();
         });
 
-        btnSwapDirection.setOnClickListener(v -> viewModel.toggleDirection());
-        btnConvert.setOnClickListener(v -> performConversion());
+        swapExchangeDirectionButton.setOnClickListener(v -> viewModel.toggleDirection());
+        fromCountryCodeAmountInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {performConversion();}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
 
         return view;
     }
@@ -79,27 +90,28 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
         String other = currentRate.getCountryCode();
         double rate = currentRate.getRateToGbp();
 
-        txtPairTitle.setText("GBP / " + other);
-        txtRateInfo.setText(String.format(Locale.UK,
+        countryCodePairText.setText("GBP / " + other);
+
+        exchangeRateText.setText(String.format(Locale.UK,
                 "1 GBP = %.4f %s", rate, other));
 
         if (isGbpToOther) {
-            txtFromCode.setText("GBP");
-            txtToCode.setText(other);
-            btnSwapDirection.setText("Swap GBP ⇄ " + other);
+            fromCountryCodeText.setText("GBP");
+            toCountryCodeText.setText(other);
+            swapExchangeDirectionButton.setText("Swap GBP ⇄ " + other);
         } else {
-            txtFromCode.setText(other);
-            txtToCode.setText("GBP");
-            btnSwapDirection.setText("Swap " + other + " ⇄ GBP");
+            fromCountryCodeText.setText(other);
+            toCountryCodeText.setText("GBP");
+            swapExchangeDirectionButton.setText("Swap " + other + " ⇄ GBP");
         }
     }
 
     private void performConversion() {
         if (currentRate == null) return;
 
-        String input = editFromAmount.getText().toString().trim();
+        String input = fromCountryCodeAmountInput.getText().toString().trim();
         if (input.isEmpty()) {
-            txtToAmount.setText("0.00");
+            conversionResultText.setText("0.00");
             return;
         }
 
@@ -107,22 +119,29 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
         try {
             amount = Double.parseDouble(input);
         } catch (NumberFormatException e) {
-            Log.e("CurrencyConverterFragment", "Number format exception: " + e);
-            txtToAmount.setText("0.00");
-            editFromAmount.setError("Please enter a valid number");
+            Log.e(TAG, "Number format exception: " + e);
+            conversionResultText.setText("0.00");
+            fromCountryCodeAmountInput.setError("Please enter a valid number");
             return;
         }
 
         if (amount < 0) {
-            Log.e("CurrencyConverterFragment", "Amount less than 0");
-            txtToAmount.setText("0.00");
-            editFromAmount.setError("Amount must be positive");
+            Log.e(TAG, "Amount less than 0");
+            conversionResultText.setText("0.00");
+            fromCountryCodeAmountInput.setError("Amount must be positive");
             return;
         }
 
         double rate = currentRate.getRateToGbp();
+
+        if (!isGbpToOther && rate == 0) {
+            conversionResultText.setText("0.00");
+            Log.e(TAG, "Attempted conversion with 0 rateToGbp");
+            return;
+        }
+
         double result = isGbpToOther ? amount * rate : amount / rate;
 
-        txtToAmount.setText(String.format(Locale.UK, "%.2f", result));
+        conversionResultText.setText(String.format(Locale.UK, "%.2f", result));
     }
 }

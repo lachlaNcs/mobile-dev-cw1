@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class RatesViewModel extends ViewModel {
+    private static final String TAG = "RatesViewModel";
     private final CurrencyRepository repository = new CurrencyRepository();
     private List<CurrencyRate> cachedRates;
     private final MutableLiveData<List<CurrencyRate>> allRates = new MutableLiveData<>();
@@ -27,17 +28,24 @@ public class RatesViewModel extends ViewModel {
 
     public void fetchRates(Handler handler) {
         Thread thread = new Thread(() -> {
-            // TODO: Handle the case where the User has no internet
-            Log.d("RatesViewModel", "Running fetchRates() on thread: " +Thread.currentThread().getName());
+            Log.d(TAG, "Running fetchRates() on thread: " + Thread.currentThread().getName());
+
             List<CurrencyRate> rates = repository.fetchRates();
             cachedRates = rates;
 
             allRates.postValue(rates);
             filteredRates.postValue(rates);
 
-            Message message = handler.obtainMessage(1, rates);
-            handler.sendMessage(message);
+            if (rates == null || rates.isEmpty()) {
+                Log.e(TAG, "fetchRates(): repository returned empty list");
+                Message errorMsg = handler.obtainMessage(-1, "No internet connection or data unavailable");
+                handler.sendMessage(errorMsg);
+            } else {
+                Message message = handler.obtainMessage(1, rates);
+                handler.sendMessage(message);
+            }
         });
+
         thread.start();
     }
 

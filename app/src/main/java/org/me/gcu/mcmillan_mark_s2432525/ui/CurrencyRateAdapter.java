@@ -1,5 +1,6 @@
 package org.me.gcu.mcmillan_mark_s2432525.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
         void onCurrencyClicked(CurrencyRate rate);
     }
 
+    private static final String TAG = "CurrencyRateAdapter";
     private final List<CurrencyRate> items = new ArrayList<>();
     private final OnCurrencyClickListener listener;
 
@@ -73,6 +75,7 @@ public class CurrencyRateAdapter extends RecyclerView.Adapter<CurrencyRateAdapte
         if (flagRes != 0) {
             holder.flag.setImageResource(flagRes);
         } else {
+            Log.w(TAG, "No flag found for " + rate.getCountryCode());
             holder.flag.setImageResource(R.drawable.eu);
         }
 
