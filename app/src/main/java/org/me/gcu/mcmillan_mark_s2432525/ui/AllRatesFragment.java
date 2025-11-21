@@ -1,7 +1,9 @@
 package org.me.gcu.mcmillan_mark_s2432525.ui;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,11 +34,14 @@ import java.util.Locale;
 
 public class AllRatesFragment extends Fragment {
     private static final String TAG = "AllRatesFragment";
+    private static final String KEY_SIDEBAR_VISIBLE = "sidebar_visible";
 
     private static final int MSG_SUCCESS = 1;
     private static final int MSG_ERROR = -1;
+    private boolean sidebarVisible = true;
 
     private RatesViewModel viewModel;
+    private View sidebarContainer;
     private View cardMainUsd;
     private View cardMainEur;
     private View cardMainJpy;
@@ -75,6 +80,11 @@ public class AllRatesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_allrates, container, false);
+
+        if (savedInstanceState != null) {
+            sidebarVisible = savedInstanceState.getBoolean(KEY_SIDEBAR_VISIBLE, true);
+        }
+
         statusText = root.findViewById(R.id.statusText);
         lastUpdatedText = root.findViewById(R.id.lastUpdatedText);
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
@@ -83,6 +93,13 @@ public class AllRatesFragment extends Fragment {
         cardMainUsd = root.findViewById(R.id.cardMainUsd);
         cardMainEur = root.findViewById(R.id.cardMainEur);
         cardMainJpy = root.findViewById(R.id.cardMainJpy);
+
+        sidebarContainer = root.findViewById(R.id.sidebarContainer);
+        if (sidebarContainer != null) {
+            ViewGroup.LayoutParams params = sidebarContainer.getLayoutParams();
+            params.width = sidebarVisible ? dpToPx(120) : 0;
+            sidebarContainer.setLayoutParams(params);
+        }
 
         textMainUsdTitle = root.findViewById(R.id.textMainUsdTitle);
         textMainUsdRate  = root.findViewById(R.id.textMainUsdRate);
@@ -144,6 +161,12 @@ public class AllRatesFragment extends Fragment {
             });
         }
         return root;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_SIDEBAR_VISIBLE, sidebarVisible);
     }
 
     @Override
@@ -272,5 +295,28 @@ public class AllRatesFragment extends Fragment {
                         .onCurrencyClicked(rate);
             }
         });
+    }
+
+    public void toggleSidebar() {
+        if (sidebarContainer == null) return;
+
+        int start = sidebarContainer.getWidth();
+        int end = sidebarVisible ? 0 : dpToPx(120);
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+        animator.setDuration(200);
+        animator.addUpdateListener(anim -> {
+            int val = (int) anim.getAnimatedValue();
+            ViewGroup.LayoutParams params = sidebarContainer.getLayoutParams();
+            params.width = val;
+            sidebarContainer.setLayoutParams(params);
+        });
+
+        animator.start();
+        sidebarVisible = !sidebarVisible;
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 }
