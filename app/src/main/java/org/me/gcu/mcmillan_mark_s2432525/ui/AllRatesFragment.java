@@ -37,6 +37,17 @@ public class AllRatesFragment extends Fragment {
     private static final int MSG_ERROR = -1;
 
     private RatesViewModel viewModel;
+    private View cardMainUsd;
+    private View cardMainEur;
+    private View cardMainJpy;
+
+    private TextView textMainUsdTitle;
+    private TextView textMainUsdRate;
+    private TextView textMainEurTitle;
+    private TextView textMainEurRate;
+    private TextView textMainJpyTitle;
+    private TextView textMainJpyRate;
+
     private TextView statusText;
     private TextView lastUpdatedText;
     private RecyclerView ratesRecyclerView;
@@ -69,6 +80,17 @@ public class AllRatesFragment extends Fragment {
         ratesRecyclerView = root.findViewById(R.id.ratesRecyclerView);
         searchInput = root.findViewById(R.id.searchInput);
         swipeRefresh = root.findViewById(R.id.swipeRefresh);
+        cardMainUsd = root.findViewById(R.id.cardMainUsd);
+        cardMainEur = root.findViewById(R.id.cardMainEur);
+        cardMainJpy = root.findViewById(R.id.cardMainJpy);
+
+        textMainUsdTitle = root.findViewById(R.id.textMainUsdTitle);
+        textMainUsdRate  = root.findViewById(R.id.textMainUsdRate);
+        textMainEurTitle = root.findViewById(R.id.textMainEurTitle);
+        textMainEurRate  = root.findViewById(R.id.textMainEurRate);
+        textMainJpyTitle = root.findViewById(R.id.textMainJpyTitle);
+        textMainJpyRate  = root.findViewById(R.id.textMainJpyRate);
+
 
         adapter = new CurrencyRateAdapter((CurrencyRate rate) -> {
             if (getActivity() instanceof CurrencyRateAdapter.OnCurrencyClickListener) {
@@ -88,6 +110,7 @@ public class AllRatesFragment extends Fragment {
             Log.d(TAG, "Loaded cached data from ViewModel");
 
             displayFetchedRates(cached);
+            bindMainCurrencies(cached);
 
             adapter.setItems(cached);
         } else {
@@ -147,6 +170,7 @@ public class AllRatesFragment extends Fragment {
                     } else {
                         displayFetchedRates(rates);
                         adapter.setItems(rates);
+                        bindMainCurrencies(rates);
                     }
                     break;
 
@@ -184,5 +208,64 @@ public class AllRatesFragment extends Fragment {
             Log.e(TAG, "Date parse failed: " + e.getMessage());
             lastUpdatedText.setText("Last updated: " + latest);
         }
+    }
+
+    private void bindMainCurrencies(List<CurrencyRate> rates) {
+        if (rates == null || rates.isEmpty()) {
+            cardMainUsd.setVisibility(View.GONE);
+            cardMainEur.setVisibility(View.GONE);
+            cardMainJpy.setVisibility(View.GONE);
+            return;
+        }
+
+        CurrencyRate usd = null;
+        CurrencyRate eur = null;
+        CurrencyRate jpy = null;
+
+        for (CurrencyRate rate : rates) {
+            String code = rate.getCountryCode();
+            if ("USD".equalsIgnoreCase(code)) {
+                usd = rate;
+            } else if ("EUR".equalsIgnoreCase(code)) {
+                eur = rate;
+            } else if ("JPY".equalsIgnoreCase(code)) {
+                jpy = rate;
+            }
+        }
+
+        bindMainCard(cardMainUsd, textMainUsdTitle, textMainUsdRate, usd);
+        bindMainCard(cardMainEur, textMainEurTitle, textMainEurRate, eur);
+        bindMainCard(cardMainJpy, textMainJpyTitle, textMainJpyRate, jpy);
+    }
+
+    private void bindMainCard(View card,
+                              TextView titleView,
+                              TextView rateView,
+                              CurrencyRate rate) {
+
+        if (rate == null) {
+            card.setVisibility(View.GONE);
+            return;
+        }
+
+        card.setVisibility(View.VISIBLE);
+
+        String code = rate.getCountryCode();
+
+        titleView.setText("GBP \u2192 " + code);
+
+        rateView.setText(String.format(
+                Locale.UK,
+                "1 GBP = %.4f %s",
+                rate.getRateToGbp(),
+                code
+        ));
+
+        card.setOnClickListener(v -> {
+            if (getActivity() instanceof CurrencyRateAdapter.OnCurrencyClickListener) {
+                ((CurrencyRateAdapter.OnCurrencyClickListener) getActivity())
+                        .onCurrencyClicked(rate);
+            }
+        });
     }
 }
