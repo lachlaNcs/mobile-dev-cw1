@@ -28,22 +28,36 @@ public class RatesViewModel extends ViewModel {
 
     public void fetchRates(Handler handler) {
         Thread thread = new Thread(() -> {
-            Log.d(TAG, "Running fetchRates() on thread: " + Thread.currentThread().getName());
+            Log.d(TAG, "Running fetchRates() on: " + Thread.currentThread().getName());
 
             List<CurrencyRate> rates = repository.fetchRates();
-            cachedRates = rates;
 
-            allRates.postValue(rates);
-            filteredRates.postValue(rates);
+            if (rates != null && !rates.isEmpty()) {
+                cachedRates = rates;
 
-            if (rates == null || rates.isEmpty()) {
-                Log.e(TAG, "fetchRates(): repository returned empty list");
-                Message errorMsg = handler.obtainMessage(-1, "No internet connection or data unavailable");
-                handler.sendMessage(errorMsg);
-            } else {
-                Message message = handler.obtainMessage(1, rates);
-                handler.sendMessage(message);
+                allRates.postValue(rates);
+                filteredRates.postValue(rates);
+
+                Message successMsg = handler.obtainMessage(1, rates);
+                handler.sendMessage(successMsg);
+                return;
             }
+
+            Log.e(TAG, "fetchRates(): repository returned empty list");
+
+            if (cachedRates != null && !cachedRates.isEmpty()) {
+                Log.w(TAG, "Using cached offline data");
+
+                allRates.postValue(cachedRates);
+                filteredRates.postValue(cachedRates);
+
+                Message offlineMsg = handler.obtainMessage(-1, "No internet connection. Please check your network and try again.");
+                handler.sendMessage(offlineMsg);
+                return;
+            }
+
+            Message errorMsg = handler.obtainMessage(-1, "No internet connection and no cached data available");
+            handler.sendMessage(errorMsg);
         });
 
         thread.start();

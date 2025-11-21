@@ -162,28 +162,6 @@ public class AllRatesFragment extends Fragment {
                     Log.w(TAG, "Unknown handler message: " + msg.what);
                     break;
             }
-
-//            if (msg.what == 1) {
-//                List<CurrencyRate> rates = (List<CurrencyRate>) msg.obj;
-//                if (rates == null || rates.isEmpty()) {
-//                    statusText.setText("No data received, please try again later.");
-//                    lastUpdatedText.setText("Last updated: N/A");
-//                    adapter.setItems(null);
-//                } else {
-//                    statusText.setText("Fetched " + rates.size() + " currencies:");
-//                    String latest = rates.get(0).getLastUpdated();
-//                    try {
-//                        SimpleDateFormat in = new SimpleDateFormat("EEE MMM d yyyy H:mm:ss 'UTC'", Locale.ENGLISH);
-//                        SimpleDateFormat out = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.UK);
-//                        Date date = in.parse(latest);
-//                        lastUpdatedText.setText("Last updated: " + out.format(date));
-//                    } catch (ParseException e) {
-//                        Log.e("AllRatesFragment", "ParseException: " + e);
-//                        lastUpdatedText.setText("Last updated: " + latest);
-//                    }
-//                    adapter.setItems(rates);
-//                }
-//            }
         }
     };
 
