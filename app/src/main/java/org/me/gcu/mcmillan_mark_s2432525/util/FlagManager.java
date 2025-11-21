@@ -38,7 +38,6 @@ public class FlagManager {
         currencyToFlag.put("LVL", "lv");
         currencyToFlag.put("SKK", "sk");
         currencyToFlag.put("RUB", "ru");
-
         currencyToFlag.put("AED", "ae");
         currencyToFlag.put("SAR", "sa");
         currencyToFlag.put("QAR", "qa");
@@ -79,11 +78,9 @@ public class FlagManager {
         currencyToFlag.put("ZMK", "zm");
         currencyToFlag.put("ZMW", "zm");
         currencyToFlag.put("ZWD", "zw");
-
         currencyToFlag.put("XAF", "cm");
         currencyToFlag.put("XOF", "sn");
         currencyToFlag.put("XPF", "pf");
-
         currencyToFlag.put("JPY", "jp");
         currencyToFlag.put("CNY", "cn");
         currencyToFlag.put("INR", "in");
@@ -113,9 +110,7 @@ public class FlagManager {
         currencyToFlag.put("KPW", "kp");
         currencyToFlag.put("TJS", "tj");
         currencyToFlag.put("TMT", "tm");
-
         currencyToFlag.put("BAM", "ba");
-
         currencyToFlag.put("USD", "us");
         currencyToFlag.put("CAD", "ca");
         currencyToFlag.put("MXN", "mx");
@@ -129,7 +124,6 @@ public class FlagManager {
         currencyToFlag.put("CRC", "cr");
         currencyToFlag.put("PAB", "pa");
         currencyToFlag.put("SVC", "sv");
-
         currencyToFlag.put("ARS", "ar");
         currencyToFlag.put("BRL", "br");
         currencyToFlag.put("CLP", "cl");
@@ -142,7 +136,6 @@ public class FlagManager {
         currencyToFlag.put("BOB", "bo");
         currencyToFlag.put("GYD", "gy");
         currencyToFlag.put("SRD", "sr");
-
         currencyToFlag.put("AUD", "au");
         currencyToFlag.put("NZD", "nz");
         currencyToFlag.put("FJD", "fj");
@@ -151,7 +144,6 @@ public class FlagManager {
         currencyToFlag.put("WST", "ws");
         currencyToFlag.put("TOP", "to");
         currencyToFlag.put("VUV", "vu");
-
         currencyToFlag.put("BND", "bn");
         currencyToFlag.put("BWP", "bw");
         currencyToFlag.put("ANG", "cw");
@@ -166,20 +158,15 @@ public class FlagManager {
         currencyToFlag.put("FKP", "fk");
         currencyToFlag.put("SHP", "sh");
         currencyToFlag.put("STD", "st");
-
         currencyToFlag.put("CDF", "cd");
         currencyToFlag.put("ERN", "er");
         currencyToFlag.put("MGA", "mg");
         currencyToFlag.put("MWK", "mw");
         currencyToFlag.put("GHS", "gh");
-
         currencyToFlag.put("LSL", "ls");
         currencyToFlag.put("SZL", "sz");
-
         currencyToFlag.put("BTN", "bt");
-
         currencyToFlag.put("BTC", "btc");
-
         currencyToFlag.put("DOP", "dom");
         currencyToFlag.put("BYR", "by");
         currencyToFlag.put("KYD", "ky");

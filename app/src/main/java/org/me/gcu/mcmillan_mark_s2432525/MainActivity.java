@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyRateAdapt
         MenuItem searchItem = menu.findItem(R.id.action_search);
         if (searchItem != null) {
             SearchView searchView = (SearchView) searchItem.getActionView();
+
             searchView.setQueryHint("Search by country or code");
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

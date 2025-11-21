@@ -106,20 +106,13 @@ public class CurrencyConverterFragment extends BottomSheetDialogFragment {
 
         if (bottomSheet == null) return;
 
-        BottomSheetBehavior<FrameLayout> behavior =
-                BottomSheetBehavior.from(bottomSheet);
+        BottomSheetBehavior<FrameLayout> behavior = BottomSheetBehavior.from(bottomSheet);
 
-        // Force the bottom sheet to full height
         bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
         bottomSheet.requestLayout();
 
-        // Fully expand it
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-        // Skip collapsed state entirely
         behavior.setSkipCollapsed(true);
-
-        // Prevent half-expanded behavior
         behavior.setFitToContents(true);
     }
 
