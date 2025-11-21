@@ -100,6 +100,8 @@ public class AllRatesFragment extends Fragment {
         });
 
         ratesRecyclerView.setAdapter(adapter);
+        swipeRefresh.setNestedScrollingEnabled(false);
+        ratesRecyclerView.setNestedScrollingEnabled(false);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RatesViewModel.class);
 
@@ -122,22 +124,25 @@ public class AllRatesFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(() -> {
             Log.i(TAG, "Swipe refresh triggered");
             statusText.setText("Refreshing data...");
-            searchInput.setText("");
+            if (searchInput != null) {
+                searchInput.setText("");
+            }
             viewModel.fetchRates(handler);
         });
 
-        searchInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {}
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        if (searchInput != null) {
+            searchInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {}
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.filterRates(s.toString());
-            }
-        });
-
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    viewModel.filterRates(s.toString());
+                }
+            });
+        }
         return root;
     }
 

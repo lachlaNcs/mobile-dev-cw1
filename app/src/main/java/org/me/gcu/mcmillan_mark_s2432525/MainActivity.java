@@ -14,10 +14,12 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.me.gcu.mcmillan_mark_s2432525.model.CurrencyRate;
@@ -25,12 +27,15 @@ import org.me.gcu.mcmillan_mark_s2432525.ui.AllRatesFragment;
 import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyConverterFragment;
 import org.me.gcu.mcmillan_mark_s2432525.ui.CurrencyRateAdapter;
 import org.me.gcu.mcmillan_mark_s2432525.viewmodel.ConversionViewModel;
+import org.me.gcu.mcmillan_mark_s2432525.viewmodel.RatesViewModel;
 
 public class MainActivity extends AppCompatActivity implements CurrencyRateAdapter.OnCurrencyClickListener {
     private static final String PREF_FILE_NAME = "user_settings";
     private static final String PREF_THEME_MODE = "theme_mode";
     private MenuItem themeToggleItem;
-    private ConversionViewModel viewModel;
+
+    private RatesViewModel ratesViewModel;
+    private ConversionViewModel conversionViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyRateAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewModel = new ViewModelProvider(this).get(ConversionViewModel.class);
+        ratesViewModel = new ViewModelProvider(this).get(RatesViewModel.class);
+        conversionViewModel = new ViewModelProvider(this).get(ConversionViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyRateAdapt
 
     @Override
     public void onCurrencyClicked(CurrencyRate rate) {
-        viewModel.setSelectedRate(rate);
+        conversionViewModel.setSelectedRate(rate);
 
         CurrencyConverterFragment f = new CurrencyConverterFragment();
         f.show(getSupportFragmentManager(), "converter");
@@ -76,6 +82,27 @@ public class MainActivity extends AppCompatActivity implements CurrencyRateAdapt
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         themeToggleItem = menu.findItem(R.id.action_toggle_theme);
         updateThemeIcon();
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        if (searchItem != null) {
+            SearchView searchView = (SearchView) searchItem.getActionView();
+            searchView.setQueryHint("Search by country or code");
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    ratesViewModel.filterRates(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    ratesViewModel.filterRates(newText);
+                    return true;
+                }
+            });
+        }
+
         return true;
     }
 

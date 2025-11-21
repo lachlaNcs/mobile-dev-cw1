@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- STATUS -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fetched 0 currencies"
+        android:textSize="12sp"
+        android:paddingBottom="2dp" />
+
+    <TextView
+        android:id="@+id/lastUpdatedText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Last updated: N/A"
+        android:textSize="11sp"
+        android:textColor="?android:textColorSecondary"
+        android:paddingBottom="6dp" />
+
+    <!-- MAIN CONTENT: SIDEBAR + LIST -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- LEFT SIDEBAR -->
+        <LinearLayout
+            android:id="@+id/sidebarMainCurrencies"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/mainSummaryLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Main currencies"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:paddingBottom="6dp" />
+
+            <!-- USD -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMainUsd"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="6dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/textMainUsdTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GBP → USD"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/textMainUsdRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0000"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- EUR -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMainEur"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="6dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/textMainEurTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GBP → EUR"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/textMainEurRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0000"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- JPY -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMainJpy"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:elevation="2dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="6dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/textMainJpyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GBP → JPY"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/textMainJpyRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0000"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <!-- RIGHT SIDE: LIST -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:tooltipText="Pull down to refresh"
+            android:paddingStart="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ratesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
