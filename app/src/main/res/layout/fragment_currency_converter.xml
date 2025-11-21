@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="numberDecimal"
+            android:imeOptions="flagNoExtractUi"
             android:hint="Amount" />
     </LinearLayout>
 
